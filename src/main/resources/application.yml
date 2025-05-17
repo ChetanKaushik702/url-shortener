@@ -1,0 +1,14 @@
+spring:
+  datasource:
+    url: jdbc:postgresql://localhost:5432/shortener
+    username: demo
+    password: secret
+  jpa:
+    hibernate.ddl-auto: update
+    open-in-view: false
+  cache:
+    type: redis
+  data:
+    redis:
+      host: localhost
+      port: 6379
