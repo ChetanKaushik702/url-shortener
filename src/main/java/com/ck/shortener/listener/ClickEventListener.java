@@ -24,13 +24,18 @@ public class ClickEventListener {
     public void handle(ClickCapturedEvent evt) {
         HttpServletRequest req = evt.request();
 
-        ClickEvent ce = new ClickEvent();
-        ce.setShortCode(evt.shortCode());
-        ce.setIpAddress(req.getRemoteAddr());
-        ce.setUserAgent(req.getHeader("User-Agent"));
-        ce.setReferrer(req.getHeader("Referer"));
-        repo.save(ce);
+        try {
+            ClickEvent ce = new ClickEvent();
+            ce.setShortCode(evt.shortCode());
+            ce.setIpAddress(req.getRemoteAddr());
+            ce.setUserAgent(req.getHeader("User-Agent"));
+            ce.setReferrer(req.getHeader("Referer"));
+            repo.save(ce);
+    
+            log.debug("Saved click for {}", evt.shortCode());
+        } catch (Exception e) {
+            log.error("Could not persist click for {}: {}", evt.shortCode(), e.getMessage());
+        }
 
-        log.debug("Saved click for {}", evt.shortCode());
     }
 }

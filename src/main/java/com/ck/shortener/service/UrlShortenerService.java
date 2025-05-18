@@ -54,7 +54,9 @@ public class UrlShortenerService {
     @Transactional
     public URI registerClick(String code, HttpServletRequest req) {
         UrlMapping m = getByCode(code);
-        publisher.publishEvent(new ClickCapturedEvent(m.getShortCode(), req));
+        if ("GET".equalsIgnoreCase(req.getMethod())) {
+            publisher.publishEvent(new ClickCapturedEvent(m.getShortCode(), req));
+        }
         return URI.create(m.getOriginalUrl());
     }
 
