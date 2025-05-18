@@ -17,3 +17,6 @@ spring:
   logging:
     level:
       com.ck.shortener: DEBUG
+  sql:
+    init:
+      mode: always
