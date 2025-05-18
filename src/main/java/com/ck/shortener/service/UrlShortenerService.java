@@ -7,6 +7,7 @@ import org.springframework.cache.annotation.CacheConfig;
 import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.context.ApplicationEventPublisher;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Service;
 
 import com.ck.shortener.domain.dto.ClickStats;
@@ -36,11 +37,18 @@ public class UrlShortenerService {
 
     @CacheEvict(key = "#result.shortCode")
     public UrlMapping create(String url, Instant expiry) {
-        UrlMapping m = new UrlMapping();
-        m.setOriginalUrl(url);
-        m.setShortCode(codeGen.next());
-        m.setExpiresAt(expiry);
-        return mappingRepo.save(m);
+        for (int i = 0; i < 5; i++) {
+            try {
+                UrlMapping m = new UrlMapping();
+                m.setOriginalUrl(url);
+                m.setShortCode(codeGen.next());
+                m.setExpiresAt(expiry);
+                return mappingRepo.save(m);
+            } catch (DataIntegrityViolationException dup) {
+                // shortCode unique constraint hit — retry
+            }
+        }
+        throw new IllegalStateException("Unable to generate unique short code after 5 attempts");
     }
 
     @Transactional
