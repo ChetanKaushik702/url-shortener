@@ -11,6 +11,6 @@ import jakarta.validation.constraints.Size;
 public record ShortenRequest (
     @NotBlank @Size(max = 2048) String url,
     @FutureOrPresent
-    @JsonFormat(pattern = "yyyy-MM-dd'T'HH:mm:ssXXX")
+    @JsonFormat(pattern = "yyyy-MM-dd'T'HH:mm:ss.SSSXXX")
     Instant expiresAt
 ) {  }
